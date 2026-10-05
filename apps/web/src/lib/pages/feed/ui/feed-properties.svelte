@@ -9,7 +9,7 @@
 
 <div
   bind:this={scrollContainer}
-  class=".flex .max-w-[1280px] .flex-1 .flex-col .gap-4 .overflow-y-auto .pb-4 .pl-2 .pr-4 .pt-2 xs:.-ml-4 xs:.w-screen"
+  class=".flex .w-full .max-w-[1280px] .flex-1 .flex-col .gap-4 .overflow-y-auto .p-4 xs:.p-2"
 >
   {#if browser && !$feed.isLoading}
     {#each $feed.properties as property (property.id)}

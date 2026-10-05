@@ -12,7 +12,7 @@
     "typescript": "5.3.3"
   },
   "engines": {
-    "node": ">=16.8.0"
+    "node": ">=18"
   },
   "scripts": {
     "gen": "bun run apps/server/generate-types.ts",
@@ -20,7 +20,8 @@
     "lint:server": "cd apps/server && bun lint",
     "lint:extension": "cd apps/extension && bun lint",
     "lint:all": "conc \"bun lint:web\" \"bun lint:server\" \"bun lint:extension\"",
-    "format": "bun -b run prettier --log-level 'warn' --write '**/*.{ts,tsx,scss,html,svelte}'"
+    "format": "bun -b run prettier --log-level 'warn' --write '**/*.{ts,tsx,scss,html,svelte}'",
+    "test": "bun test"
   },
   "packageManager": "bun@1.2.7",
   "private": true,

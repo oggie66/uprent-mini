@@ -4,25 +4,40 @@
   import { CommuteTime } from '$lib/widgets'
 
   export let property: Property
+  let failedImageURL: string | undefined
 </script>
 
 <div
-  class=".relative .flex .h-[200px] .min-w-[540px] .grow .rounded-md .bg-white .text-left .shadow-md"
+  class=".relative .grid .min-w-0 .shrink-0 .grid-cols-[200px_minmax(0,1fr)_540px] .rounded-md .bg-white .text-left .shadow-md md:.grid-cols-[200px_minmax(0,1fr)] sm:.grid-cols-1"
 >
-  <span class=".contents">
-    <span
-      class=".relative .h-full .w-[250px] .overflow-hidden .rounded-l-md xl:.w-[200px]"
-    >
-      <span
-        class=".absolute .bottom-0 .left-0 .right-0 .top-0 .bg-cover .bg-center"
-        style="background-image: url({property.previewImageURL})"
-      ></span>
-    </span>
-  </span>
-  <div class=".flex .min-h-[180px] .flex-1 .flex-col .p-3 .pl-6 xs:.pl-3">
+  <div
+    class=".relative .h-[200px] .w-[200px] .self-start .overflow-hidden .rounded-md .bg-gray-100"
+  >
+    {#if !property.previewImageURL || failedImageURL === property.previewImageURL}
+      <div
+        class=".flex .h-full .items-center .justify-center .p-4 .text-center .text-sm .text-gray-500"
+      >
+        Photo unavailable
+      </div>
+    {:else}
+      <img
+        src={property.previewImageURL}
+        alt=""
+        aria-hidden="true"
+        class=".absolute .inset-0 .h-full .w-full .scale-125 .object-cover .blur-xl"
+      />
+      <img
+        src={property.previewImageURL}
+        alt={property.title}
+        on:error={() => (failedImageURL = property.previewImageURL)}
+        class=".relative .block .h-full .w-full .object-contain"
+      />
+    {/if}
+  </div>
+  <div class=".flex .min-w-0 .flex-col .gap-6 .p-5">
     <div class=".flex .flex-col .gap-1">
       <span
-        class=".relative .max-w-[calc(100%-6rem)] .self-start .text-left .font-bold .text-primary hover:.underline"
+        class=".relative .self-start .break-words .text-left .font-bold .text-primary hover:.underline"
       >
         <a
           href={property.sourceURL}
@@ -34,7 +49,7 @@
       </span>
       <span class=".text-gray-600">{property.cityName}</span>
     </div>
-    <div class=".mt-2 .flex .grow .flex-col .justify-center .gap-1">
+    <div class=".mt-2 .flex .flex-col .gap-1">
       {#if property.price}
         <span class=".flex .gap-2">
           <CashSVG />
@@ -51,5 +66,7 @@
       {/if}
     </div>
   </div>
-  <CommuteTime />
+  <div class=".min-w-0 .p-3 md:.col-span-2 sm:.col-span-1">
+    <CommuteTime origin={`${property.title}, ${property.cityName}`} />
+  </div>
 </div>

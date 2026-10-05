@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "eslint-config-custom": "workspace:*",
-    "dts-bundle-generator": "https://github.com/Turbo-Rent/dts-bundle-generator",
+    "dts-bundle-generator": "https://github.com/Turbo-Rent/dts-bundle-generator#141ee6a",
     "tsconfig": "workspace:*"
   },
   "scripts": {

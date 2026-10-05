@@ -3,18 +3,8 @@
   "name": "Uprent mini",
   "description": "A personal rental-search companion for Pararius.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5HRU6N+ZsvrM/v5ugZ54ke8i9oYt6yGk4rkiqWT2QJ6Os2nteJ4Bu46Ac0+qY2rUoUIA/kwALgl7KNbkai8+03DY1CqQ74uziz/2ECqOZTlf0ey/kOUEMBYFKVL8oCTqsRai+/yDwmTnb/L7YJ+Ear+PBPbq8eVGcIQ7pq75aAPeeMdsI39WqcGF/a/BsUKkQNnlKgJSMC5wSnj5NjysUDoTMt5e1uTy4EOoUAnnSLvkVUlTkqavfm0snCPd2s5ZrwS96ycwlfDUEGHununOzWAVeg5Ho9X/AJJ7DJpcAezXGQAbyeDV6p9R3DGW1H1zuRfEazMbsI92npic0PzbbQIDAQAB",
-  "permissions": [
-    "scripting",
-    "tabs",
-    "management",
-    "activeTab",
-    "cookies",
-    "storage"
-  ],
-  "host_permissions": [
-    "https://www.pararius.com/",
-    "https://www.pararius.nl/"
-  ],
+  "permissions": ["storage"],
+  "host_permissions": ["http://localhost/*"],
   "action": {
     "default_icon": "icons/192x192.png"
   },
@@ -23,23 +13,18 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "content-scripts/main.js"
-      ],
+      "matches": ["https://www.pararius.com/*", "https://www.pararius.nl/*"],
+      "js": ["content-scripts/main.js"],
       "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "/fonts/*"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "resources": ["/fonts/*"],
+      "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost/*"]
+  }
 }

@@ -1,44 +1,61 @@
 # Uprent Mini
 
-A personal rental-search project maintained by Ognjen Karagunovic, with a web app, browser extension, and API.
+A personal rental-search project maintained by Ognjen Karagunovic, with a web app, Chrome extension, and API.
 
-## Installation
+## Run locally
 
-1. Install [Bun](https://bun.sh/docs/installation) on your system
-2. Run `bun i` in the project root
+Use Bun **1.2.7** and Node.js **18+** (Node 24 was used for verification).
 
-Done!
+```sh
+bun install --frozen-lockfile
+```
 
-## Overview
+Run these commands in separate terminals from the repository root:
 
-This is a monorepo, that consists of several apps & packages.
+```sh
+bun run --cwd apps/server dev
+bun run --cwd apps/web dev
+bun run --cwd apps/extension dev
+```
 
-Apps are isolated projects (meaning you cannot use code from `extension` in `web`, for example).
+- Web: **http://localhost:5173**
+- API: **http://localhost:5002**
+- Extension build: `apps/extension/dist`
 
-Packages contain shared code, that can be used in any app.
+Vite runs under Node; the API and package manager use Bun. Port 5173 avoids macOS AirPlay/Control Center's port 5000. Use `localhost`, not `127.0.0.1`, for the web app: the extension validates the exact origin.
 
-## Scripts
+## Install the extension
 
-Each app has several scripts that you can use. To use them, `cd` into the app directory and then run `bun run <script name>`
+1. Run `bun run --cwd apps/extension build`.
+2. Open `chrome://extensions` in Chrome and enable Developer mode.
+3. Choose **Load unpacked** and select this project's `apps/extension/dist` directory.
+4. Reload the web app and any open Pararius property pages.
+5. Open a rental property on `https://www.pararius.com` or `https://www.pararius.nl`.
 
-### `lint`
-This script runs ESLint & TypeScript checks. Everything is already configured, so it should just work!
+After rebuilding, reload the extension in Chrome and reload the affected tabs. The fixed manifest public key preserves the extension ID used by the web connection and the existing API origin policy.
 
-### `start`
-Runs the app. Does not reload when you change files.
+## Commute preferences
 
-### `dev`
-Runs the app. Watches for file changes, and reloads the app automatically.
+Choose **Settings** or **Add a destination** in any widget. Save zero, one, or two addresses and optional per-mode travel limits. Suggestions are mock addresses; free-form addresses are accepted. Blank limits mean no limit. Commute estimates load automatically when saved destinations are present and are independently randomized for each address. Choose a destination to view its results. Transport rows open Google Maps directions from the listing address; only over-limit results are highlighted in red. The map is illustrative, not a real route.
 
-### `build`
-Builds the app!
+Preferences live in `chrome.storage.local` and are shared across the web app and extension in the **same Chrome profile**. The web app requires the extension for commute settings and shows installation guidance when it is unavailable. Settings are local, not synchronized between devices. Concurrent saves use last-write-wins semantics.
 
-----
+The shared widget is in `packages/~ui/components/commute-time`. App adapters supply settings and request transport. To add a rental platform, add its content-script match, trusted origin, and page controller; the widget and worker protocol can be reused.
 
-##### There are also two special scripts available in the root of the project:
+## Verify
 
-### `gen`
-Generates API type for the `~api` package. You should run this after each change of the schemas in `server`
+```sh
+bun test
+bun run lint:all
+bun run --cwd apps/web build
+bun run --cwd apps/extension build
+bun run gen
+```
 
-### `lint:all`
-Just a helper that runs all `lint` scripts, as well as checks code formatting
+`gen` regenerates the API declarations after server schema changes. Its existing generator dependency is pinned to the original lockfile revision.
+
+- [Task-by-task decisions](docs/DECISIONS.md)
+- [Commute bug explanation](docs/BUGFIX.md)
+- [Verification record](docs/VERIFICATION.md)
+
+The Gallery task is a separate sibling repository, `uprent-gallery`, using web port 5174 and API port 5003. Nothing has been submitted or pushed to GitHub.

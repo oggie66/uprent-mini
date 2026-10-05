@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun -b run vite dev --host 0.0.0.0 --port 5000",
+    "dev": "vite dev --host 127.0.0.1 --port 5173 --strictPort",
     "build": "vite build",
-    "start": "HOST=:: PORT=5000 node .build",
+    "start": "HOST=127.0.0.1 PORT=5173 node .build",
     "lint": "eslint . && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {

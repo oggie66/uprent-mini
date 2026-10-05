@@ -1,32 +1,21 @@
 import { App } from '@widgets'
 
 export const injectApp = () => {
-  let app = new App({
-    target: document.documentElement,
+  // Keep a real root so page mutations do not repeatedly recreate the app.
+  const root = document.createElement('div')
+  root.dataset.uprentApp = ''
+  document.documentElement.append(root)
+  new App({ target: root })
+
+  const stylesheet = Array.from(document.head.querySelectorAll('style')).find(
+    style => style.textContent?.includes('uprent-poppins'),
+  )
+  const observer = new MutationObserver(() => {
+    if (stylesheet && !stylesheet.isConnected) document.head.append(stylesheet)
+    if (!root.isConnected) document.documentElement.append(root)
   })
-
-  const styles = Array.from(document.head.querySelectorAll('style'))
-  const uprentStyleElement = styles.find(style => {
-    return (
-      style.textContent?.includes('svelte') &&
-      style.textContent.includes('uprent')
-    )
+  observer.observe(document.documentElement, { childList: true, subtree: true })
+  window.addEventListener('pagehide', () => observer.disconnect(), {
+    once: true,
   })
-  uprentStyleElement?.setAttribute('data-uprent-styles', 'true')
-  const styleBackup = uprentStyleElement?.cloneNode(true)
-
-  const restoreApp = () => {
-    if (document.querySelector('[data-uprent-app]')) return
-
-    if (styleBackup && !document.querySelector('[data-uprent-styles]')) {
-      document.head.append(styleBackup)
-    }
-
-    app.$destroy()
-    app = new App({
-      target: document.documentElement,
-    })
-  }
-
-  setInterval(restoreApp, 500)
 }

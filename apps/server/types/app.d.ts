@@ -51,8 +51,10 @@ declare const app: import("elysia").default<"", false, {
 } & {
 	commute: {
 		durations: {
-			get: {
-				body: unknown;
+			post: {
+				body: {
+					addresses: string[];
+				};
 				params: Record<never, string>;
 				query: unknown;
 				headers: unknown;
@@ -60,12 +62,15 @@ declare const app: import("elysia").default<"", false, {
 					200: {
 						status: "success";
 						payload: {
-							durations: {
-								walking: number | null;
-								driving: number | null;
-								transit: number | null;
-								biking: number | null;
-							};
+							results: {
+								address: string;
+								durations: {
+									walking: number | null;
+									driving: number | null;
+									transit: number | null;
+									biking: number | null;
+								};
+							}[];
 						};
 					};
 				} | {

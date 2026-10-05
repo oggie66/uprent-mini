@@ -1,40 +1,35 @@
 import { SinglePropertyPageController } from '@features'
 import { CommuteTime } from '@widgets'
+import { parariusOrigin } from '~core/commute/directions'
 
 class ParariusController extends SinglePropertyPageController {
-  initialized = false
-
   constructor() {
     super()
   }
 
-  onPageMutation() {
-    if (this.initialized) {
-      return
-    }
-    this.initialized = true
+  private target: HTMLDivElement | null = null
+  private widget: CommuteTime | null = null
+  private url = ''
 
-    const container = document.querySelector<HTMLDivElement>(
-      '.agent-summary__buttons',
-    )
+  onPageMutation() {
+    if (this.target?.isConnected && this.url === location.pathname) return
+
+    this.widget?.$destroy()
+    this.target?.remove()
+    this.widget = null
+    this.target = null
+
+    const container = document.querySelector('.listing-detail-summary')
     if (!container) return
 
-    this.insertCommuteTime()
-  }
-
-  insertCommuteTime() {
-    const commuteButtonContainer = document.querySelector(
-      '.listing-detail-summary',
-    )
-    if (!commuteButtonContainer) return
-
-    const travelTimeTarget = document.createElement('div')
-    travelTimeTarget.classList.add('uprent-travel-time')
-    travelTimeTarget.classList.add('uprent-pararius-travel-time')
-    commuteButtonContainer.append(travelTimeTarget)
-
-    new CommuteTime({
-      target: travelTimeTarget,
+    this.url = location.pathname
+    this.target = document.createElement('div')
+    this.target.className = 'uprent-travel-time uprent-pararius-travel-time'
+    container.append(this.target)
+    const title = container.querySelector('h1')?.textContent ?? ''
+    this.widget = new CommuteTime({
+      target: this.target,
+      props: { origin: parariusOrigin(title) },
     })
   }
 }
